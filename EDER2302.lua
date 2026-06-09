@@ -1,6 +1,5 @@
 -- // EDER2302 PANEL FASE BETA | Echo también por TOCINACIO23021
 -- ADVERTENCIA: Viola los Términos de Servicio de Roblox. Úsalo bajo tu propia responsabilidad.
--- CORREGIDO PARA DELTA EXECUTOR + AIMBOT + LISTA DE IGNORADOS
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -236,9 +235,7 @@ function crearMenuPrincipal()
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(1, 0, 0, 70)
     title.BackgroundColor3 = Color3.fromRGB(12, 12, 20)
-    title.Text = string.format("💎 EDER2302 PANEL FASE BETA
-👤 %s | %s | 👥 %d jugadores
-Echo también por TOCINACIO23021", jugador, dispositivo, #Players:GetPlayers())
+    title.Text = string.format("💎 EDER2302 PANEL FASE BETA\n👤 %s | %s | 👥 %d jugadores\nEcho también por TOCINACIO23021", jugador, dispositivo, #Players:GetPlayers())
     title.TextColor3 = Color3.fromRGB(110, 220, 255)
     title.TextSize = 16
     title.Font = Enum.Font.GothamBold
@@ -302,14 +299,6 @@ Echo también por TOCINACIO23021", jugador, dispositivo, #Players:GetPlayers())
     local espActivo = false
     local espInventarioActivo = false
     local etiquetasESP = {}
-
-    -- ==================== VARIABLES AIMBOT ====================
-    local aimbotActivo = false
-    local aimbotFOV = 90
-    local aimbotSmooth = 15
-    local aimbotPart = "Head"
-    local aimbotIgnoreTeammates = true
-    local ignoreList = {}
 
     local function updateChar()
         local char = player.Character or player.CharacterAdded:Wait()
@@ -457,7 +446,7 @@ Echo también por TOCINACIO23021", jugador, dispositivo, #Players:GetPlayers())
         end
     end)
 
-    -- ✅ LOW GRAVITY ARREGLADO
+    -- ✅ LOW GRAVITY ARREGLADO (ahora sí se apaga)
     local gravBtn = createToggle("Low Gravity")
     local gravActivo = false
     gravBtn.MouseButton1Click:Connect(function()
@@ -525,8 +514,7 @@ Echo también por TOCINACIO23021", jugador, dispositivo, #Players:GetPlayers())
                                 txt.Parent = gui
                                 etiquetasESP[p] = txt
                             end
-                            etiquetasESP[p].Text = string.format("👤 %s
-❤️ %d/100 | 📏 %.0fm", p.Name, math.floor(p.Character.Humanoid.Health), dist)
+                            etiquetasESP[p].Text = string.format("👤 %s\n❤️ %d/100 | 📏 %.0fm", p.Name, math.floor(p.Character.Humanoid.Health), dist)
                         else
                             if etiquetasESP[p] then etiquetasESP[p].Parent:Destroy() etiquetasESP[p] = nil end
                         end
@@ -562,6 +550,7 @@ Echo también por TOCINACIO23021", jugador, dispositivo, #Players:GetPlayers())
                         local cam = Workspace.CurrentCamera
                         local vector, visible = cam:WorldToViewportPoint(parte.Position)
                         if visible then
+                            -- Obtener inventario
                             local inventario = p.Backpack
                             local lista = {}
                             if inventario then
@@ -571,11 +560,11 @@ Echo también por TOCINACIO23021", jugador, dispositivo, #Players:GetPlayers())
                                     end
                                 end
                             end
+                            -- Agregar herramienta actual
                             if hum and hum:FindFirstChild("Tool") then
                                 table.insert(lista, "✅ "..hum.Tool.Name.." (Equipado)")
                             end
-                            local textoInv = #lista > 0 and table.concat(lista, "
-• ") or "Sin objetos"
+                            local textoInv = #lista > 0 and table.concat(lista, "\n• ") or "Sin objetos"
                             if not etiquetasESP["Inv_"..p.UserId] then
                                 local gui = Instance.new("BillboardGui")
                                 gui.Name = "ESPInv_"..p.Name
@@ -594,8 +583,7 @@ Echo también por TOCINACIO23021", jugador, dispositivo, #Players:GetPlayers())
                                 txt.Parent = gui
                                 etiquetasESP["Inv_"..p.UserId] = txt
                             end
-                            etiquetasESP["Inv_"..p.UserId].Text = string.format("🎒 Inventario de %s:
-• %s", p.Name, textoInv)
+                            etiquetasESP["Inv_"..p.UserId].Text = string.format("🎒 Inventario de %s:\n• %s", p.Name, textoInv)
                         else
                             if etiquetasESP["Inv_"..p.UserId] then etiquetasESP["Inv_"..p.UserId].Parent:Destroy() etiquetasESP["Inv_"..p.UserId] = nil end
                         end
@@ -614,261 +602,51 @@ Echo también por TOCINACIO23021", jugador, dispositivo, #Players:GetPlayers())
         end
     end)
 
-    -- ==================== 🎯 AIMBOT ====================
-    local aimbotBtn = createToggle("🎯 AIMBOT")
-    aimbotBtn.MouseButton1Click:Connect(function()
-        aimbotActivo = not aimbotActivo
-        if aimbotActivo then
-            aimbotBtn.Text = "🎯 AIMBOT : ON"
-            aimbotBtn.TextColor3 = Color3.fromRGB(80,255,120)
-            
-            connections.aimbot = RunService.RenderStepped:Connect(function()
-                if not humanoid or not root then return end
-                
-                local camera = Workspace.CurrentCamera
-                local cameraPos = camera.Position
-                local cameraDir = camera.CFrame.LookVector
-                
-                local bestTarget = nil
-                local bestDistance = math.huge
-                
-                for _, p in ipairs(Players:GetPlayers()) do
-                    if p == player then continue end
-                    if not p.Character then continue end
-                    if not p.Character:FindFirstChild("HumanoidRootPart") then continue end
-                    if not p.Character:FindFirstChild("Humanoid") then continue end
-                    if p.Character.Humanoid.Health <= 0 then continue end
-                    
-                    -- Ignorar teammates
-                    if aimbotIgnoreTeammates then
-                        if p.Team and player.Team and p.Team == player.Team then
-                            continue
-                        end
-                    end
-                    
-                    -- Ignorar si está en la lista
-                    if ignoreList[p.Name] then
-                        continue
-                    end
-                    
-                    local targetPart = p.Character.HumanoidRootPart
-                    local targetPos = targetPart.Position
-                    local distance = (cameraPos - targetPos).Magnitude
-                    
-                    -- Calcular FOV
-                    local toTarget = (targetPos - cameraPos).Unit
-                    local angle = math.acos(math.min(cameraDir:Dot(toTarget), 1))
-                    local angleDegrees = angle * (180 / math.pi)
-                    
-                    if angleDegrees <= aimbotFOV / 2 then
-                        if distance < bestDistance then
-                            bestDistance = distance
-                            bestTarget = {player = p, position = targetPos}
-                        end
-                    end
-                end
-                
-                -- Apuntar al objetivo
-                if bestTarget then
-                    local targetPos = bestTarget.position
-                    
-                    -- Selección de parte
-                    if aimbotPart == "Head" then
-                        local head = bestTarget.player.Character:FindFirstChild("Head")
-                        if head then targetPos = head.Position end
-                    elseif aimbotPart == "Body" then
-                        targetPos = bestTarget.player.Character.HumanoidRootPart.Position
-                    end
-                    
-                    -- Suavizado
-                    local screenPos = camera:WorldToScreenPoint(targetPos)
-                    local centerX = camera.ViewportSize.X / 2
-                    local centerY = camera.ViewportSize.Y / 2
-                    
-                    local offsetX = screenPos.X - centerX
-                    local offsetY = screenPos.Y - centerY
-                    
-                    -- Simular click
-                    UserInputService.SendMouse2Click(offsetX, offsetY)
-                end
-            end)
-        else
-            aimbotBtn.Text = "🎯 AIMBOT : OFF"
-            aimbotBtn.TextColor3 = Color3.fromRGB(255,90,90)
-            if connections.aimbot then 
-                connections.aimbot:Disconnect() 
-                connections.aimbot = nil 
-            end
-        end
-    end)
-
-    -- FOV
-    local fovBtn = createToggle("FOV AIMBOT")
-    local fovBox = Instance.new("TextBox")
-    fovBox.Size = UDim2.new(0.45,0,0,35)
-    fovBox.Position = UDim2.new(0.5,0,0,8)
-    fovBox.BackgroundColor3 = Color3.fromRGB(25,25,35)
-    fovBox.Text = aimbotFOV
-    fovBox.TextColor3 = Color3.new(1,1,1)
-    fovBox.TextSize = 16
-    fovBox.Font = Enum.Font.GothamSemibold
-    fovBox.Parent = fovBtn.Parent
-    Instance.new("UICorner", fovBox).CornerRadius = UDim.new(0,8)
-    Instance.new("UIStroke", fovBox).Thickness = 1
-    Instance.new("UIStroke", fovBox).Color = Color3.fromRGB(90, 180, 255)
-    
-    fovBtn.Size = UDim2.new(0.45,0,0,35)
-    fovBtn.Position = UDim2.new(0.03,0,0,8)
-    fovBtn.Text = "FOV: 90"
-    fovBtn.TextColor3 = Color3.new(1,1,1)
-
-    -- Smooth
-    local smoothBtn = createToggle("SMOOTH AIM")
-    local smoothBox = Instance.new("TextBox")
-    smoothBox.Size = UDim2.new(0.45,0,0,35)
-    smoothBox.Position = UDim2.new(0.5,0,0,8)
-    smoothBox.BackgroundColor3 = Color3.fromRGB(25,25,35)
-    smoothBox.Text = aimbotSmooth
-    smoothBox.TextColor3 = Color3.new(1,1,1)
-    smoothBox.TextSize = 16
-    smoothBox.Font = Enum.Font.GothamSemibold
-    smoothBox.Parent = smoothBtn.Parent
-    Instance.new("UICorner", smoothBox).CornerRadius = UDim.new(0,8)
-    Instance.new("UIStroke", smoothBox).Thickness = 1
-    Instance.new("UIStroke", smoothBox).Color = Color3.fromRGB(90, 180, 255)
-    
-    smoothBtn.Size = UDim2.new(0.45,0,0,35)
-    smoothBtn.Position = UDim2.new(0.03,0,0,8)
-    smoothBtn.Text = "SMOOTH: 15"
-    smoothBtn.TextColor3 = Color3.new(1,1,1)
-
-    -- Parte del cuerpo
-    local partBtn = createToggle("PARTE AIMBOT")
-    local partBox = Instance.new("TextBox")
-    partBox.Size = UDim2.new(0.45,0,0,35)
-    partBox.Position = UDim2.new(0.5,0,0,8)
-    partBox.BackgroundColor3 = Color3.fromRGB(25,25,35)
-    partBox.Text = aimbotPart
-    partBox.TextColor3 = Color3.new(1,1,1)
-    partBox.TextSize = 16
-    partBox.Font = Enum.Font.GothamSemibold
-    partBox.PlaceholderText = "Head, Body"
-    partBox.Parent = partBtn.Parent
-    Instance.new("UICorner", partBox).CornerRadius = UDim.new(0,8)
-    Instance.new("UIStroke", partBox).Thickness = 1
-    Instance.new("UIStroke", partBox).Color = Color3.fromRGB(90, 180, 255)
-    
-    partBtn.Size = UDim2.new(0.45,0,0,35)
-    partBtn.Position = UDim2.new(0.03,0,0,8)
-    partBtn.Text = "PARTE: Head"
-    partBtn.TextColor3 = Color3.new(1,1,1)
-
-    -- Ignorar teammates
-    local teamBtn = createToggle("IGNORAR TEAMMATES")
-    teamBtn.Text = aimbotIgnoreTeammates and "IGNORAR TEAMMATES : ON" or "IGNORAR TEAMMATES : OFF"
-    teamBtn.TextColor3 = aimbotIgnoreTeammates and Color3.fromRGB(80,255,120) or Color3.fromRGB(255,90,90)
-    
-    teamBtn.MouseButton1Click:Connect(function()
-        aimbotIgnoreTeammates = not aimbotIgnoreTeammates
-        teamBtn.Text = aimbotIgnoreTeammates and "IGNORAR TEAMMATES : ON" or "IGNORAR TEAMMATES : OFF"
-        teamBtn.TextColor3 = aimbotIgnoreTeammates and Color3.fromRGB(80,255,120) or Color3.fromRGB(255,90,90)
-    end)
-
-    -- ==================== 📋 LISTA DE IGNORADOS ====================
-    local ignoreBtn = createToggle("📋 AÑADIR A IGNORADOS")
-    local ignoreInput = Instance.new("TextBox")
-    ignoreInput.Size = UDim2.new(0.6,0,0,35)
-    ignoreInput.Position = UDim2.new(0.03,0,0,8)
-    ignoreInput.BackgroundColor3 = Color3.fromRGB(25,25,35)
-    ignoreInput.PlaceholderText = "Nombre del jugador..."
-    ignoreInput.Text = ""
-    ignoreInput.TextColor3 = Color3.new(1,1,1)
-    ignoreInput.TextSize = 14
-    ignoreInput.Font = Enum.Font.GothamSemibold
-    ignoreInput.Parent = ignoreBtn.Parent
-    Instance.new("UICorner", ignoreInput).CornerRadius = UDim.new(0,8)
-    Instance.new("UIStroke", ignoreInput).Thickness = 1
-    Instance.new("UIStroke", ignoreInput).Color = Color3.fromRGB(90, 180, 255)
-    
-    local ignoreAddBtn = Instance.new("TextButton")
-    ignoreAddBtn.Size = UDim2.new(0.3,0,0,35)
-    ignoreAddBtn.Position = UDim2.new(0.63,0,0,8)
-    ignoreAddBtn.BackgroundColor3 = Color3.fromRGB(30,180,80)
-    ignoreAddBtn.Text = "➕"
-    ignoreAddBtn.TextColor3 = Color3.new(1,1,1)
-    ignoreAddBtn.TextSize = 18
-    ignoreAddBtn.Font = Enum.Font.GothamBold
-    ignoreAddBtn.Parent = ignoreBtn.Parent
-    Instance.new("UICorner", ignoreAddBtn).CornerRadius = UDim.new(0,8)
-    Instance.new("UIStroke", ignoreAddBtn).Thickness = 1
-    Instance.new("UIStroke", ignoreAddBtn).Color = Color3.fromRGB(120, 255, 180)
-    
-    ignoreBtn.Size = UDim2.new(1,0,0,58)
-    ignoreBtn.Position = UDim2.new(0,0,0,0)
-    ignoreBtn.Text = "📋 LISTA: " .. #ignoreList .. " jugadores"
-    ignoreBtn.TextColor3 = Color3.new(1,1,1)
-
-    ignoreAddBtn.MouseButton1Click:Connect(function()
-        local nombre = ignoreInput.Text:gsub("^\\s+", ""):gsub("\\s+$", "")
-        if nombre and #nombre > 0 then
-            if not ignoreList[nombre] then
-                ignoreList[nombre] = true
-                ignoreInput.Text = ""
-                ignoreBtn.Text = "📋 LISTA: " .. #ignoreList .. " jugadores"
-                ignoreBtn.TextColor3 = Color3.fromRGB(80,255,120)
-                print("✅ " .. nombre .. " agregado a ignorados")
-            else
-                ignoreBtn.TextColor3 = Color3.fromRGB(255,200,100)
-                ignoreBtn.Text = "⚠️ " .. nombre .. " ya está en la lista"
-                task.wait(2)
-                ignoreBtn.Text = "📋 LISTA: " .. #ignoreList .. " jugadores"
-                ignoreBtn.TextColor3 = Color3.new(1,1,1)
-            end
-        end
-    end)
-
     -- Teleport
     local saveBtn = createToggle("Guardar Posición")
     local instantBtn = createToggle("Teleport Instantáneo")
-    local smoothBtn2 = createToggle("Teleport Suave")
+    local smoothBtn = createToggle("Teleport Suave")
 
     saveBtn.TextColor3 = Color3.new(1,1,1)
     instantBtn.TextColor3 = Color3.new(1,1,1)
-    smoothBtn2.TextColor3 = Color3.new(1,1,1)
+    smoothBtn.TextColor3 = Color3.new(1,1,1)
 
     saveBtn.MouseButton1Click:Connect(function()
         if root then savedCFrame = root.CFrame saveBtn.Text = "✅ Guardado" task.delay(1.2, function() saveBtn.Text = "Guardar Posición" end) end
     end)
     instantBtn.MouseButton1Click:Connect(function() if savedCFrame and root then root.CFrame = savedCFrame end end)
-    smoothBtn2.MouseButton1Click:Connect(function() if savedCFrame and root then TweenService:Create(root, TweenInfo.new(1.6, Enum.EasingStyle.Quint), {CFrame = savedCFrame}):Play() end end)
+    smoothBtn.MouseButton1Click:Connect(function() if savedCFrame and root then TweenService:Create(root, TweenInfo.new(1.6, Enum.EasingStyle.Quint), {CFrame = savedCFrame}):Play() end end)
 
     minBtn.MouseButton1Click:Connect(function()
         content.Visible = not content.Visible
         mainFrame.Size = content.Visible and UDim2.new(0,450,0,680) or UDim2.new(0,450,0,75)
     end)
 
-    -- ✅ BOTÓN CERRAR GUI ARREGLADO
+    -- ✅ BOTÓN CERRAR GUI ARREGLADO (cierra todo correctamente)
     closeBtn.MouseButton1Click:Connect(function()
+        -- Detener todas las funciones
         for _, conn in pairs(connections) do
             if typeof(conn) == "RBXScriptConnection" then
                 conn:Disconnect()
             end
         end
+        -- Restaurar valores originales
         Workspace.Gravity = normalGravity
         if humanoid then
             humanoid.WalkSpeed = velocidadNormal
             humanoid.JumpPower = 50
             humanoid.JumpHeight = 7.2
         end
+        -- Borrar todo el ESP
         for _,etq in pairs(etiquetasESP) do
             if etq and etq.Parent then
                 etq.Parent:Destroy()
             end
         end
+        -- Borrar la GUI
         screenGui:Destroy()
     end)
 
     print("✅ EDER2302 PANEL CARGADO | Echo también por TOCINACIO23021")
-    print("🎯 Aimbot integrado correctamente")
-    print("📋 Lista de ignorados: " .. #ignoreList .. " jugadores")
-                end
+end
+
