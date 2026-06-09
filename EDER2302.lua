@@ -1,4 +1,4 @@
--- EDER2302 PANEL FASE BETA | Echo también por TOCINACIO23021
+-- // EDER2302 PANEL FASE BETA | Echo también por TOCINACIO23021
 -- ADVERTENCIA: Viola los Términos de Servicio de Roblox. Úsalo bajo tu propia responsabilidad.
 
 local Players = game:GetService("Players")
@@ -11,7 +11,6 @@ local GuiService = game:GetService("GuiService")
 local player = Players.LocalPlayer
 local jugador = player.Name
 local dispositivo = UserInputService.TouchEnabled and "📱 Celular" or "💻 PC"
-local jugadoresServidor = #Players:GetPlayers()
 
 -- ==================== PANTALLA DE CLAVE ====================
 local keyGui = Instance.new("ScreenGui")
@@ -45,7 +44,7 @@ keyTitle.TextSize = 32
 keyTitle.Font = Enum.Font.GothamBold
 keyTitle.Parent = keyFrame
 
--- 🆕 BOTÓN CERRAR
+-- Botón cerrar
 local closeKeyBtn = Instance.new("TextButton")
 closeKeyBtn.Size = UDim2.new(0, 120, 0, 40)
 closeKeyBtn.Position = UDim2.new(0.5, -60, 0.75, 0)
@@ -113,29 +112,21 @@ keyStatus.TextSize = 15
 keyStatus.Font = Enum.Font.Gotham
 keyStatus.Parent = keyFrame
 
--- Acción del botón cerrar
-closeKeyBtn.MouseButton1Click:Connect(function()
-    keyGui:Destroy()
-end)
+closeKeyBtn.MouseButton1Click:Connect(function() keyGui:Destroy() end)
 
--- Copiar enlace
 keyLinkBtn.MouseButton1Click:Connect(function()
     setclipboard("https://chat.whatsapp.com/Cn5IwKTTcsf49PushVJ3LX")
     keyStatus.TextColor3 = Color3.fromRGB(100, 255, 150)
     keyStatus.Text = "✅ Enlace copiado al portapapeles"
-    task.wait(2)
-    keyStatus.Text = ""
+    task.wait(2) keyStatus.Text = ""
 end)
 
--- Verificación
 local claveCorrecta = "EDER23021"
 verifyBtn.MouseButton1Click:Connect(function()
     if keyBox.Text == claveCorrecta then
         keyStatus.TextColor3 = Color3.fromRGB(100, 255, 150)
         keyStatus.Text = "✅ Clave correcta! Cargando..."
-        task.wait(1)
-        keyGui:Destroy()
-        cargarPantallaCarga()
+        task.wait(1) keyGui:Destroy() cargarPantallaCarga()
     else
         keyStatus.TextColor3 = Color3.fromRGB(255, 100, 100)
         keyStatus.Text = "❌ Clave incorrecta. Intenta nuevamente"
@@ -178,7 +169,7 @@ function cargarPantallaCarga()
     progressBar.Size = UDim2.new(0.6,0,0,20)
     progressBar.Position = UDim2.new(0.2,0,0.55,0)
     progressBar.BackgroundColor3 = Color3.fromRGB(20, 25, 40)
-    progressBar.Parent = loadingFrame
+    progressBar.Parent = loadingGui
     Instance.new("UICorner", progressBar).CornerRadius = UDim.new(0,10)
     Instance.new("UIStroke", progressBar).Thickness = 1
     Instance.new("UIStroke", progressBar).Color = Color3.fromRGB(80, 150, 220)
@@ -205,16 +196,13 @@ function cargarPantallaCarga()
     percentLabel.Font = Enum.Font.Gotham
     percentLabel.Parent = loadingFrame
 
-    -- Animación de carga
     for i = 1, 100 do
         percentLabel.Text = i .. "%"
         progressFill.Size = UDim2.new(i/100, 0, 1, 0)
         task.wait(0.03)
     end
 
-    task.wait(0.5)
-    loadingGui:Destroy()
-    crearMenuPrincipal()
+    task.wait(0.5) loadingGui:Destroy() crearMenuPrincipal()
 end
 
 -- ==================== MENÚ PRINCIPAL ====================
@@ -244,13 +232,12 @@ function crearMenuPrincipal()
     mainGradient.Rotation = 90
     mainGradient.Parent = mainFrame
 
-    -- Título con información
     local title = Instance.new("TextLabel")
     title.Size = UDim2.new(1, 0, 0, 70)
     title.BackgroundColor3 = Color3.fromRGB(12, 12, 20)
-    title.Text = string.format("💎 EDER2302 PANEL\n👤 %s | %s | 👥 %d jugadores", jugador, dispositivo, jugadoresServidor)
+    title.Text = string.format("💎 EDER2302 PANEL FASE BETA\n👤 %s | %s | 👥 %d jugadores\nEcho también por TOCINACIO23021", jugador, dispositivo, #Players:GetPlayers())
     title.TextColor3 = Color3.fromRGB(110, 220, 255)
-    title.TextSize = 18
+    title.TextSize = 16
     title.Font = Enum.Font.GothamBold
     title.TextWrapped = true
     title.Parent = mainFrame
@@ -263,9 +250,8 @@ function crearMenuPrincipal()
     titleGradient.Parent = title
     title.TextTransparency = 0.1
 
-    -- Minimize y Close
     local minBtn = Instance.new("TextButton")
-    minBtn.Size = UDim2.new(0,40,0,40) 
+    minBtn.Size = UDim2.new(0,40,0,40)
     minBtn.Position = UDim2.new(1,-90,0,8)
     minBtn.BackgroundColor3 = Color3.fromRGB(255,170,0)
     minBtn.Text = "−"
@@ -278,7 +264,7 @@ function crearMenuPrincipal()
     Instance.new("UIStroke", minBtn).Color = Color3.fromRGB(255, 200, 100)
 
     local closeBtn = Instance.new("TextButton")
-    closeBtn.Size = UDim2.new(0,40,0,40) 
+    closeBtn.Size = UDim2.new(0,40,0,40)
     closeBtn.Position = UDim2.new(1,-45,0,8)
     closeBtn.BackgroundColor3 = Color3.fromRGB(220,50,50)
     closeBtn.Text = "×"
@@ -311,6 +297,7 @@ function crearMenuPrincipal()
     local normalGravity = Workspace.Gravity
     local velocidadNormal = 16
     local espActivo = false
+    local espInventarioActivo = false
     local etiquetasESP = {}
 
     local function updateChar()
@@ -366,18 +353,15 @@ function crearMenuPrincipal()
 
     speedBtn.MouseButton1Click:Connect(function()
         if connections.speed then
-            connections.speed:Disconnect()
-            connections.speed = nil
+            connections.speed:Disconnect() connections.speed = nil
             if humanoid then humanoid.WalkSpeed = velocidadNormal end
-            speedBtn.Text = "Speed : OFF"
-            speedBtn.TextColor3 = Color3.fromRGB(255,90,90)
+            speedBtn.Text = "Speed : OFF" speedBtn.TextColor3 = Color3.fromRGB(255,90,90)
         else
             local spd = tonumber(speedBox.Text) or 120
             connections.speed = RunService.Heartbeat:Connect(function()
                 if humanoid then humanoid.WalkSpeed = spd end
             end)
-            speedBtn.Text = "Speed : ON ("..spd..")"
-            speedBtn.TextColor3 = Color3.fromRGB(80,255,120)
+            speedBtn.Text = "Speed : ON ("..spd..")" speedBtn.TextColor3 = Color3.fromRGB(80,255,120)
         end
     end)
 
@@ -410,10 +394,8 @@ function crearMenuPrincipal()
 
     jumpBtn.MouseButton1Click:Connect(function()
         if connections.jump then
-            connections.jump:Disconnect()
-            connections.jump = nil
-            jumpBtn.Text = "JumpPower : OFF"
-            jumpBtn.TextColor3 = Color3.fromRGB(255,90,90)
+            connections.jump:Disconnect() connections.jump = nil
+            jumpBtn.Text = "JumpPower : OFF" jumpBtn.TextColor3 = Color3.fromRGB(255,90,90)
             if humanoid then humanoid.JumpPower = 50 humanoid.JumpHeight = 7.2 end
         else
             local jp = tonumber(jumpBox.Text) or 200
@@ -421,8 +403,7 @@ function crearMenuPrincipal()
             connections.jump = RunService.Heartbeat:Connect(function()
                 if humanoid then humanoid.JumpPower = jp end
             end)
-            jumpBtn.Text = "JumpPower : ON ("..jp..")"
-            jumpBtn.TextColor3 = Color3.fromRGB(80,255,120)
+            jumpBtn.Text = "JumpPower : ON ("..jp..")" jumpBtn.TextColor3 = Color3.fromRGB(80,255,120)
         end
     end)
 
@@ -431,25 +412,24 @@ function crearMenuPrincipal()
     infBtn.MouseButton1Click:Connect(function()
         if connections.inf then
             connections.inf:Disconnect() connections.inf = nil
-            infBtn.Text = "Infinite Jump : OFF"
-            infBtn.TextColor3 = Color3.fromRGB(255,90,90)
+            infBtn.Text = "Infinite Jump : OFF" infBtn.TextColor3 = Color3.fromRGB(255,90,90)
         else
             connections.inf = UserInputService.JumpRequest:Connect(function()
                 if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end
             end)
-            infBtn.Text = "Infinite Jump : ON"
-            infBtn.TextColor3 = Color3.fromRGB(80,255,120)
+            infBtn.Text = "Infinite Jump : ON" infBtn.TextColor3 = Color3.fromRGB(80,255,120)
         end
     end)
 
     -- God Mode
     local godBtn = createToggle("God Mode (Ultra)")
     godBtn.MouseButton1Click:Connect(function()
-        local enabled = godBtn.Text:find("ON")
-        if not enabled then
-            godBtn.Text = "God Mode : ON"
-            godBtn.TextColor3 = Color3.fromRGB(255, 200, 0)
-            
+        if connections.god then
+            connections.god:Disconnect() connections.god = nil
+            if connections.respawnGod then connections.respawnGod:Disconnect() connections.respawnGod = nil end
+            godBtn.Text = "God Mode : OFF" godBtn.TextColor3 = Color3.fromRGB(255,90,90)
+        else
+            godBtn.Text = "God Mode : ON" godBtn.TextColor3 = Color3.fromRGB(255, 200, 0)
             connections.god = RunService.Heartbeat:Connect(function()
                 if humanoid then
                     humanoid.MaxHealth = math.huge
@@ -457,142 +437,56 @@ function crearMenuPrincipal()
                     humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
                 end
             end)
-            
             connections.respawnGod = player.CharacterAdded:Connect(function(newChar)
                 task.wait(0.3)
                 local h = newChar:WaitForChild("Humanoid")
-                h.MaxHealth = math.huge
-                h.Health = math.huge
+                h.MaxHealth = math.huge h.Health = math.huge
                 h:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
             end)
-        else
-            godBtn.Text = "God Mode : OFF"
-            godBtn.TextColor3 = Color3.fromRGB(255,90,90)
-            if connections.god then connections.god:Disconnect() connections.god = nil end
-            if connections.respawnGod then connections.respawnGod:Disconnect() connections.respawnGod = nil end
         end
     end)
 
     -- Low Gravity
     local gravBtn = createToggle("Low Gravity")
     gravBtn.MouseButton1Click:Connect(function()
-        if Workspace.Gravity > 100 then
-            Workspace.Gravity = 25
-            gravBtn.Text = "Low Gravity : ON"
-            gravBtn.TextColor3 = Color3.fromRGB(80,255,120)
-        else
+        if connections.grav then
+            connections.grav:Disconnect() connections.grav = nil
             Workspace.Gravity = normalGravity
-            gravBtn.Text = "Low Gravity : OFF"
-            gravBtn.TextColor3 = Color3.fromRGB(255,90,90)
-        end
-    end)
-
-    -- 🆕 FLY COMPATIBLE PC Y CELULAR
-    local flyFrame = Instance.new("Frame")
-    flyFrame.Size = UDim2.new(1,0,0,75)
-    flyFrame.BackgroundColor3 = Color3.fromRGB(35,35,45)
-    flyFrame.Parent = content
-    Instance.new("UICorner", flyFrame).CornerRadius = UDim.new(0,10)
-    Instance.new("UIStroke", flyFrame).Thickness = 0.8
-    Instance.new("UIStroke", flyFrame).Color = Color3.fromRGB(70, 70, 90)
-
-    local flyBox = Instance.new("TextBox")
-    flyBox.Size = UDim2.new(0.45,0,0,35)
-    flyBox.Position = UDim2.new(0.5,0,0,8)
-    flyBox.BackgroundColor3 = Color3.fromRGB(25,25,35)
-    flyBox.Text = "60"
-    flyBox.TextColor3 = Color3.new(1,1,1)
-    flyBox.TextSize = 16
-    flyBox.Font = Enum.Font.GothamSemibold
-    flyBox.Parent = flyFrame
-    Instance.new("UICorner", flyBox).CornerRadius = UDim.new(0,8)
-    Instance.new("UIStroke", flyBox).Thickness = 1
-    Instance.new("UIStroke", flyBox).Color = Color3.fromRGB(90, 180, 255)
-
-    local flyBtn = createToggle("Fly")
-    flyBtn.Size = UDim2.new(0.45,0,0,35)
-    flyBtn.Position = UDim2.new(0.03,0,0,8)
-    flyBtn.TextColor3 = Color3.new(1,1,1)
-
-    -- Controles para PC y Celular
-    local teclas = {W=false,A=false,S=false,D=false,Up=false,Down=false,Left=false,Right=false}
-    UserInputService.InputBegan:Connect(function(i,g)
-        if g then return end
-        if i.KeyCode == Enum.KeyCode.W then teclas.W = true
-        elseif i.KeyCode == Enum.KeyCode.S then teclas.S = true
-        elseif i.KeyCode == Enum.KeyCode.A then teclas.A = true
-        elseif i.KeyCode == Enum.KeyCode.D then teclas.D = true
-        elseif i.KeyCode == Enum.KeyCode.Up then teclas.Up = true
-        elseif i.KeyCode == Enum.KeyCode.Down then teclas.Down = true end
-    end)
-    UserInputService.InputEnded:Connect(function(i,g)
-        if g then return end
-        if i.KeyCode == Enum.KeyCode.W then teclas.W = false
-        elseif i.KeyCode == Enum.KeyCode.S then teclas.S = false
-        elseif i.KeyCode == Enum.KeyCode.A then teclas.A = false
-        elseif i.KeyCode == Enum.KeyCode.D then teclas.D = false
-        elseif i.KeyCode == Enum.KeyCode.Up then teclas.Up = false
-        elseif i.KeyCode == Enum.KeyCode.Down then teclas.Down = false end
-    end)
-
-    flyBtn.MouseButton1Click:Connect(function()
-        if connections.fly then
-            connections.fly:Disconnect() connections.fly = nil
-            if humanoid then humanoid.PlatformStand = false end
-            flyBtn.Text = "Fly : OFF"
-            flyBtn.TextColor3 = Color3.fromRGB(255,90,90)
+            gravBtn.Text = "Low Gravity : OFF" gravBtn.TextColor3 = Color3.fromRGB(255,90,90)
         else
-            local velocidadVuelo = tonumber(flyBox.Text) or 60
-            local cam = Workspace.CurrentCamera
-            connections.fly = RunService.RenderStepped:Connect(function()
-                if not humanoid or not root then return end
-                humanoid.PlatformStand = true
-                local movimiento = Vector3.new()
-                -- Controles PC
-                if teclas.W then movimiento += cam.CFrame.LookVector end
-                if teclas.S then movimiento -= cam.CFrame.LookVector end
-                if teclas.A then movimiento -= cam.CFrame.RightVector end
-                if teclas.D then movimiento += cam.CFrame.RightVector end
-                if teclas.Up then movimiento += Vector3.new(0,1,0) end
-                if teclas.Down then movimiento -= Vector3.new(0,1,0) end
-                -- Controles Celular
-                if UserInputService.TouchEnabled then
-                    local stick = game:GetService("VirtualInputManager")
-                    if stick:IsKeyDown(Enum.KeyCode.Thumbstick1) then
-                        local dir = stick:GetThumbstickDirection(Enum.KeyCode.Thumbstick1)
-                        movimiento += cam.CFrame.RightVector * dir.X + cam.CFrame.LookVector * dir.Z
-                    end
-                end
-                root.Velocity = movimiento.Unit * velocidadVuelo
-            end)
-            flyBtn.Text = "Fly : ON ("..velocidadVuelo..")"
-            flyBtn.TextColor3 = Color3.fromRGB(80,255,120)
+            Workspace.Gravity = 25
+            connections.grav = true
+            gravBtn.Text = "Low Gravity : ON" gravBtn.TextColor3 = Color3.fromRGB(80,255,120)
         end
     end)
 
-    -- 🆕 NO CLIP
+    -- ==================== NO CLIP ====================
     local noclipBtn = createToggle("No Clip")
     noclipBtn.MouseButton1Click:Connect(function()
         if connections.noclip then
             connections.noclip:Disconnect() connections.noclip = nil
-            noclipBtn.Text = "No Clip : OFF"
-            noclipBtn.TextColor3 = Color3.fromRGB(255,90,90)
+            for _,p in ipairs(root.Parent:GetDescendants()) do
+                if p:IsA("BasePart") then p.CanCollide = true end
+            end
+            noclipBtn.Text = "No Clip : OFF" noclipBtn.TextColor3 = Color3.fromRGB(255,90,90)
         else
             connections.noclip = RunService.Stepped:Connect(function()
-                if root then root.CanCollide = false end
+                if root then
+                    for _,p in ipairs(root.Parent:GetDescendants()) do
+                        if p:IsA("BasePart") then p.CanCollide = false end
+                    end
+                end
             end)
-            noclipBtn.Text = "No Clip : ON"
-            noclipBtn.TextColor3 = Color3.fromRGB(80,255,120)
+            noclipBtn.Text = "No Clip : ON" noclipBtn.TextColor3 = Color3.fromRGB(80,255,120)
         end
     end)
 
-    -- 🆕 ESP DE JUGADORES
+    -- ==================== ESP JUGADORES ====================
     local espBtn = createToggle("ESP Jugadores")
     espBtn.MouseButton1Click:Connect(function()
         espActivo = not espActivo
         if espActivo then
-            espBtn.Text = "ESP : ON"
-            espBtn.TextColor3 = Color3.fromRGB(80,255,120)
+            espBtn.Text = "ESP : ON" espBtn.TextColor3 = Color3.fromRGB(80,255,120)
             connections.esp = RunService.RenderStepped:Connect(function()
                 for _,p in ipairs(Players:GetPlayers()) do
                     if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") and p.Character:FindFirstChild("Humanoid") and p.Character.Humanoid.Health > 0 then
@@ -604,7 +498,7 @@ function crearMenuPrincipal()
                                 local gui = Instance.new("BillboardGui")
                                 gui.Name = "ESP_"..p.Name
                                 gui.Adornee = parte
-                                gui.Size = UDim2.new(0, 150, 0, 50)
+                                gui.Size = UDim2.new(0, 160, 0, 60)
                                 gui.AlwaysOnTop = true
                                 gui.Parent = screenGui
                                 local txt = Instance.new("TextLabel")
@@ -613,11 +507,12 @@ function crearMenuPrincipal()
                                 txt.TextColor3 = Color3.fromRGB(255,80,80)
                                 txt.TextSize = 14
                                 txt.Font = Enum.Font.GothamBold
+                                txt.TextWrapped = true
                                 txt.Text = ""
                                 txt.Parent = gui
                                 etiquetasESP[p] = txt
                             end
-                            etiquetasESP[p].Text = string.format("👤 %s\n📏 %.0fm", p.Name, dist)
+                            etiquetasESP[p].Text = string.format("👤 %s\n❤️ %d/100 | 📏 %.0fm", p.Name, math.floor(p.Character.Humanoid.Health), dist)
                         else
                             if etiquetasESP[p] then etiquetasESP[p].Parent:Destroy() etiquetasESP[p] = nil end
                         end
@@ -627,15 +522,85 @@ function crearMenuPrincipal()
                 end
             end)
         else
-            espBtn.Text = "ESP : OFF"
-            espBtn.TextColor3 = Color3.fromRGB(255,90,90)
+            espBtn.Text = "ESP : OFF" espBtn.TextColor3 = Color3.fromRGB(255,90,90)
             if connections.esp then connections.esp:Disconnect() connections.esp = nil end
             for _,etq in pairs(etiquetasESP) do if etq then etq.Parent:Destroy() end end
             etiquetasESP = {}
         end
     end)
 
-    -- Posiciones
+    -- ==================== ESP INVENTARIO ====================
+    local espInvBtn = createToggle("ESP Inventario")
+    espInvBtn.MouseButton1Click:Connect(function()
+        espInventarioActivo = not espInventarioActivo
+        if espInventarioActivo then
+            espInvBtn.Text = "ESP Inventario : ON"
+            espInvBtn.TextColor3 = Color3.fromRGB(80,255,120)
+            connections.espInv = RunService.RenderStepped:Connect(function()
+                for _,p in ipairs(Players:GetPlayers()) do
+                    if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                        local parte = p.Character.HumanoidRootPart
+                        local hum = p.Character:FindFirstChild("Humanoid")
+                        if not hum or hum.Health <= 0 then
+                            if etiquetasESP["Inv_"..p.UserId] then etiquetasESP["Inv_"..p.UserId].Parent:Destroy() etiquetasESP["Inv_"..p.UserId] = nil end
+                            continue
+                        end
+                        local cam = Workspace.CurrentCamera
+                        local vector, visible = cam:WorldToViewportPoint(parte.Position)
+                        if visible then
+                            -- Obtener inventario
+                            local inventario = p.Backpack
+                            local lista = {}
+                            if inventario then
+                                for _,obj in ipairs(inventario:GetChildren()) do
+                                    if obj:IsA("Tool") or obj:IsA("HopperBin") then
+                                        table.insert(lista, obj.Name)
+                                    end
+                                end
+                            end
+                            -- Agregar herramienta actual
+                            if hum and hum:FindFirstChild("Tool") then
+                                table.insert(lista, "✅ "..hum.Tool.Name.." (Equipado)")
+                            end
+                            local textoInv = #lista > 0 and table.concat(lista, "\n• ") or "Sin objetos"
+                            if not etiquetasESP["Inv_"..p.UserId] then
+                                local gui = Instance.new("BillboardGui")
+                                gui.Name = "ESPInv_"..p.Name
+                                gui.Adornee = parte
+                                gui.Size = UDim2.new(0, 220, 0, 100)
+                                gui.AlwaysOnTop = true
+                                gui.Parent = screenGui
+                                local txt = Instance.new("TextLabel")
+                                txt.Size = UDim2.new(1,0,1,0)
+                                txt.BackgroundTransparency = 1
+                                txt.TextColor3 = Color3.fromRGB(120, 255, 120)
+                                txt.TextSize = 13
+                                txt.Font = Enum.Font.GothamBold
+                                txt.TextWrapped = true
+                                txt.Text = ""
+                                txt.Parent = gui
+                                etiquetasESP["Inv_"..p.UserId] = txt
+                            end
+                            etiquetasESP["Inv_"..p.UserId].Text = string.format("🎒 Inventario de %s:\n• %s", p.Name, textoInv)
+                        else
+                            if etiquetasESP["Inv_"..p.UserId] then etiquetasESP["Inv_"..p.UserId].Parent:Destroy() etiquetasESP["Inv_"..p.UserId] = nil end
+                        end
+                    else
+                        if etiquetasESP["Inv_"..p.UserId] then etiquetasESP["Inv_"..p.UserId].Parent:Destroy() etiquetasESP["Inv_"..p.UserId] = nil end
+                    end
+                end
+            end)
+        else
+            espInvBtn.Text = "ESP Inventario : OFF"
+            espInvBtn.TextColor3 = Color3.fromRGB(255,90,90)
+            if connections.espInv then connections.espInv:Disconnect() connections.espInv = nil end
+            for k,etq in pairs(etiquetasESP) do
+                if k:sub(1,4) == "Inv_" then etq.Parent:Destroy() etiquetasESP[k] = nil end
+            end
+        end
+    end)
+
+    -- Teleport
     local saveBtn = createToggle("Guardar Posición")
     local instantBtn = createToggle("Teleport Instantáneo")
     local smoothBtn = createToggle("Teleport Suave")
@@ -645,24 +610,11 @@ function crearMenuPrincipal()
     smoothBtn.TextColor3 = Color3.new(1,1,1)
 
     saveBtn.MouseButton1Click:Connect(function()
-        if root then
-            savedCFrame = root.CFrame
-            saveBtn.Text = "✅ Guardado"
-            task.delay(1.2, function() saveBtn.Text = "Guardar Posición" end)
-        end
+        if root then savedCFrame = root.CFrame saveBtn.Text = "✅ Guardado" task.delay(1.2, function() saveBtn.Text = "Guardar Posición" end) end
     end)
+    instantBtn.MouseButton1Click:Connect(function() if savedCFrame and root then root.CFrame = savedCFrame end end)
+    smoothBtn.MouseButton1Click:Connect(function() if savedCFrame and root then TweenService:Create(root, TweenInfo.new(1.6, Enum.EasingStyle.Quint), {CFrame = savedCFrame}):Play() end end)
 
-    instantBtn.MouseButton1Click:Connect(function()
-        if savedCFrame and root then root.CFrame = savedCFrame end
-    end)
-
-    smoothBtn.MouseButton1Click:Connect(function()
-        if savedCFrame and root then
-            TweenService:Create(root, TweenInfo.new(1.6, Enum.EasingStyle.Quint), {CFrame = savedCFrame}):Play()
-        end
-    end)
-
-    -- Minimizar y Cerrar
     minBtn.MouseButton1Click:Connect(function()
         content.Visible = not content.Visible
         mainFrame.Size = content.Visible and UDim2.new(0,450,0,680) or UDim2.new(0,450,0,75)
@@ -676,8 +628,9 @@ function crearMenuPrincipal()
         screenGui:Destroy()
     end)
 
-    print("✅ EDER2302 PANEL FASE BETA CARGADO")
+    print("✅ EDER2302 PANEL CARGADO | Echo también por TOCINACIO23021")
 end
+   
 
 
             
