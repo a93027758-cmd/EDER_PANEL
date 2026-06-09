@@ -446,19 +446,21 @@ function crearMenuPrincipal()
         end
     end)
 
-    -- ✅ LOW GRAVITY ARREGLADO (ahora sí se apaga)
+    -- ✅ LOW GRAVITY CORREGIDO (funciona activar/desactivar correctamente)
     local gravBtn = createToggle("Low Gravity")
-    local gravActivo = false
     gravBtn.MouseButton1Click:Connect(function()
-        gravActivo = not gravActivo
-        if gravActivo then
-            Workspace.Gravity = 25
-            gravBtn.Text = "Low Gravity : ON"
-            gravBtn.TextColor3 = Color3.fromRGB(80,255,120)
-        else
+        if connections.gravity then
+            connections.gravity:Disconnect()
+            connections.gravity = nil
             Workspace.Gravity = normalGravity
             gravBtn.Text = "Low Gravity : OFF"
             gravBtn.TextColor3 = Color3.fromRGB(255,90,90)
+        else
+            connections.gravity = RunService.Heartbeat:Connect(function()
+                Workspace.Gravity = 25
+            end)
+            gravBtn.Text = "Low Gravity : ON"
+            gravBtn.TextColor3 = Color3.fromRGB(80,255,120)
         end
     end)
 
@@ -649,4 +651,3 @@ function crearMenuPrincipal()
 
     print("✅ EDER2302 PANEL CARGADO | Echo también por TOCINACIO23021")
 end
-
