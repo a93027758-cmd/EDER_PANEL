@@ -1,4 +1,4 @@
--- // EDER2302 PANEL FASE BETA | Echo también por TOCINACIO23021
+-- EDER2302 PANEL FASE BETA | Echo también por TOCINACIO23021
 -- ADVERTENCIA: Viola los Términos de Servicio de Roblox. Úsalo bajo tu propia responsabilidad.
 
 local Players = game:GetService("Players")
@@ -6,8 +6,12 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local Workspace = game:GetService("Workspace")
+local GuiService = game:GetService("GuiService")
 
 local player = Players.LocalPlayer
+local jugador = player.Name
+local dispositivo = UserInputService.TouchEnabled and "📱 Celular" or "💻 PC"
+local jugadoresServidor = #Players:GetPlayers()
 
 -- ==================== PANTALLA DE CLAVE ====================
 local keyGui = Instance.new("ScreenGui")
@@ -213,17 +217,16 @@ function cargarPantallaCarga()
     crearMenuPrincipal()
 end
 
--- ==================== MENÚ PRINCIPAL (DECORADO + SPEED CORREGIDO) ====================
+-- ==================== MENÚ PRINCIPAL ====================
 function crearMenuPrincipal()
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "Eder2302Panel"
     screenGui.ResetOnSpawn = false
     screenGui.Parent = player:WaitForChild("PlayerGui")
 
-    -- ✅ TAMAÑO AUMENTADO: antes 360, ahora 450 de ancho
     local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 450, 0, 680) -- Más ancho
-    mainFrame.Position = UDim2.new(0.5, -225, 0.5, -340) -- Centrado correctamente
+    mainFrame.Size = UDim2.new(0, 450, 0, 680)
+    mainFrame.Position = UDim2.new(0.5, -225, 0.5, -340)
     mainFrame.BackgroundColor3 = Color3.fromRGB(22, 22, 28)
     mainFrame.Active = true
     mainFrame.Draggable = true
@@ -241,12 +244,13 @@ function crearMenuPrincipal()
     mainGradient.Rotation = 90
     mainGradient.Parent = mainFrame
 
+    -- Título con información
     local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(1, 0, 0, 55)
+    title.Size = UDim2.new(1, 0, 0, 70)
     title.BackgroundColor3 = Color3.fromRGB(12, 12, 20)
-    title.Text = "💎 EDER2302 PANEL FASE BETA | Echo también por TOCINACIO23021"
+    title.Text = string.format("💎 EDER2302 PANEL\n👤 %s | %s | 👥 %d jugadores", jugador, dispositivo, jugadoresServidor)
     title.TextColor3 = Color3.fromRGB(110, 220, 255)
-    title.TextSize = 20
+    title.TextSize = 18
     title.Font = Enum.Font.GothamBold
     title.TextWrapped = true
     title.Parent = mainFrame
@@ -287,8 +291,8 @@ function crearMenuPrincipal()
     Instance.new("UIStroke", closeBtn).Color = Color3.fromRGB(255, 120, 120)
 
     local content = Instance.new("ScrollingFrame")
-    content.Size = UDim2.new(1,-20,1,-75)
-    content.Position = UDim2.new(0,10,0,65)
+    content.Size = UDim2.new(1,-20,1,-85)
+    content.Position = UDim2.new(0,10,0,75)
     content.BackgroundTransparency = 1
     content.ScrollBarThickness = 6
     content.ScrollBarImageColor3 = Color3.fromRGB(90, 190, 255)
@@ -305,7 +309,9 @@ function crearMenuPrincipal()
     local connections = {}
     local savedCFrame = nil
     local normalGravity = Workspace.Gravity
-    local velocidadNormal = 16 -- Velocidad original del juego
+    local velocidadNormal = 16
+    local espActivo = false
+    local etiquetasESP = {}
 
     local function updateChar()
         local char = player.Character or player.CharacterAdded:Wait()
@@ -331,7 +337,7 @@ function crearMenuPrincipal()
         return btn
     end
 
-    -- ==================== SPEED (CORREGIDO) ====================
+    -- ==================== SPEED ====================
     local speedFrame = Instance.new("Frame")
     speedFrame.Size = UDim2.new(1,0,0,75)
     speedFrame.BackgroundColor3 = Color3.fromRGB(35,35,45)
@@ -360,16 +366,12 @@ function crearMenuPrincipal()
 
     speedBtn.MouseButton1Click:Connect(function()
         if connections.speed then
-            -- ✅ AL APAGAR: RESTABLECER VELOCIDAD NORMAL
             connections.speed:Disconnect()
             connections.speed = nil
-            if humanoid then
-                humanoid.WalkSpeed = velocidadNormal
-            end
+            if humanoid then humanoid.WalkSpeed = velocidadNormal end
             speedBtn.Text = "Speed : OFF"
             speedBtn.TextColor3 = Color3.fromRGB(255,90,90)
         else
-            -- ✅ AL PRENDER: USAR LA VELOCIDAD QUE ESCRIBAS
             local spd = tonumber(speedBox.Text) or 120
             connections.speed = RunService.Heartbeat:Connect(function()
                 if humanoid then humanoid.WalkSpeed = spd end
@@ -412,16 +414,10 @@ function crearMenuPrincipal()
             connections.jump = nil
             jumpBtn.Text = "JumpPower : OFF"
             jumpBtn.TextColor3 = Color3.fromRGB(255,90,90)
-            if humanoid then 
-                humanoid.JumpPower = 50 
-                humanoid.JumpHeight = 7.2 
-            end
+            if humanoid then humanoid.JumpPower = 50 humanoid.JumpHeight = 7.2 end
         else
             local jp = tonumber(jumpBox.Text) or 200
-            if humanoid then
-                humanoid.JumpPower = jp
-                humanoid.JumpHeight = jp
-            end
+            if humanoid then humanoid.JumpPower = jp humanoid.JumpHeight = jp end
             connections.jump = RunService.Heartbeat:Connect(function()
                 if humanoid then humanoid.JumpPower = jp end
             end)
@@ -446,8 +442,8 @@ function crearMenuPrincipal()
         end
     end)
 
-    -- God Mode - En proceso
-    local godBtn = createToggle("God Mode (Ultra) - En proceso")
+    -- God Mode
+    local godBtn = createToggle("God Mode (Ultra)")
     godBtn.MouseButton1Click:Connect(function()
         local enabled = godBtn.Text:find("ON")
         if not enabled then
@@ -470,7 +466,7 @@ function crearMenuPrincipal()
                 h:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
             end)
         else
-            godBtn.Text = "God Mode (Ultra) - En proceso : OFF"
+            godBtn.Text = "God Mode : OFF"
             godBtn.TextColor3 = Color3.fromRGB(255,90,90)
             if connections.god then connections.god:Disconnect() connections.god = nil end
             if connections.respawnGod then connections.respawnGod:Disconnect() connections.respawnGod = nil end
@@ -488,6 +484,154 @@ function crearMenuPrincipal()
             Workspace.Gravity = normalGravity
             gravBtn.Text = "Low Gravity : OFF"
             gravBtn.TextColor3 = Color3.fromRGB(255,90,90)
+        end
+    end)
+
+    -- 🆕 FLY COMPATIBLE PC Y CELULAR
+    local flyFrame = Instance.new("Frame")
+    flyFrame.Size = UDim2.new(1,0,0,75)
+    flyFrame.BackgroundColor3 = Color3.fromRGB(35,35,45)
+    flyFrame.Parent = content
+    Instance.new("UICorner", flyFrame).CornerRadius = UDim.new(0,10)
+    Instance.new("UIStroke", flyFrame).Thickness = 0.8
+    Instance.new("UIStroke", flyFrame).Color = Color3.fromRGB(70, 70, 90)
+
+    local flyBox = Instance.new("TextBox")
+    flyBox.Size = UDim2.new(0.45,0,0,35)
+    flyBox.Position = UDim2.new(0.5,0,0,8)
+    flyBox.BackgroundColor3 = Color3.fromRGB(25,25,35)
+    flyBox.Text = "60"
+    flyBox.TextColor3 = Color3.new(1,1,1)
+    flyBox.TextSize = 16
+    flyBox.Font = Enum.Font.GothamSemibold
+    flyBox.Parent = flyFrame
+    Instance.new("UICorner", flyBox).CornerRadius = UDim.new(0,8)
+    Instance.new("UIStroke", flyBox).Thickness = 1
+    Instance.new("UIStroke", flyBox).Color = Color3.fromRGB(90, 180, 255)
+
+    local flyBtn = createToggle("Fly")
+    flyBtn.Size = UDim2.new(0.45,0,0,35)
+    flyBtn.Position = UDim2.new(0.03,0,0,8)
+    flyBtn.TextColor3 = Color3.new(1,1,1)
+
+    -- Controles para PC y Celular
+    local teclas = {W=false,A=false,S=false,D=false,Up=false,Down=false,Left=false,Right=false}
+    UserInputService.InputBegan:Connect(function(i,g)
+        if g then return end
+        if i.KeyCode == Enum.KeyCode.W then teclas.W = true
+        elseif i.KeyCode == Enum.KeyCode.S then teclas.S = true
+        elseif i.KeyCode == Enum.KeyCode.A then teclas.A = true
+        elseif i.KeyCode == Enum.KeyCode.D then teclas.D = true
+        elseif i.KeyCode == Enum.KeyCode.Up then teclas.Up = true
+        elseif i.KeyCode == Enum.KeyCode.Down then teclas.Down = true end
+    end)
+    UserInputService.InputEnded:Connect(function(i,g)
+        if g then return end
+        if i.KeyCode == Enum.KeyCode.W then teclas.W = false
+        elseif i.KeyCode == Enum.KeyCode.S then teclas.S = false
+        elseif i.KeyCode == Enum.KeyCode.A then teclas.A = false
+        elseif i.KeyCode == Enum.KeyCode.D then teclas.D = false
+        elseif i.KeyCode == Enum.KeyCode.Up then teclas.Up = false
+        elseif i.KeyCode == Enum.KeyCode.Down then teclas.Down = false end
+    end)
+
+    flyBtn.MouseButton1Click:Connect(function()
+        if connections.fly then
+            connections.fly:Disconnect() connections.fly = nil
+            if humanoid then humanoid.PlatformStand = false end
+            flyBtn.Text = "Fly : OFF"
+            flyBtn.TextColor3 = Color3.fromRGB(255,90,90)
+        else
+            local velocidadVuelo = tonumber(flyBox.Text) or 60
+            local cam = Workspace.CurrentCamera
+            connections.fly = RunService.RenderStepped:Connect(function()
+                if not humanoid or not root then return end
+                humanoid.PlatformStand = true
+                local movimiento = Vector3.new()
+                -- Controles PC
+                if teclas.W then movimiento += cam.CFrame.LookVector end
+                if teclas.S then movimiento -= cam.CFrame.LookVector end
+                if teclas.A then movimiento -= cam.CFrame.RightVector end
+                if teclas.D then movimiento += cam.CFrame.RightVector end
+                if teclas.Up then movimiento += Vector3.new(0,1,0) end
+                if teclas.Down then movimiento -= Vector3.new(0,1,0) end
+                -- Controles Celular
+                if UserInputService.TouchEnabled then
+                    local stick = game:GetService("VirtualInputManager")
+                    if stick:IsKeyDown(Enum.KeyCode.Thumbstick1) then
+                        local dir = stick:GetThumbstickDirection(Enum.KeyCode.Thumbstick1)
+                        movimiento += cam.CFrame.RightVector * dir.X + cam.CFrame.LookVector * dir.Z
+                    end
+                end
+                root.Velocity = movimiento.Unit * velocidadVuelo
+            end)
+            flyBtn.Text = "Fly : ON ("..velocidadVuelo..")"
+            flyBtn.TextColor3 = Color3.fromRGB(80,255,120)
+        end
+    end)
+
+    -- 🆕 NO CLIP
+    local noclipBtn = createToggle("No Clip")
+    noclipBtn.MouseButton1Click:Connect(function()
+        if connections.noclip then
+            connections.noclip:Disconnect() connections.noclip = nil
+            noclipBtn.Text = "No Clip : OFF"
+            noclipBtn.TextColor3 = Color3.fromRGB(255,90,90)
+        else
+            connections.noclip = RunService.Stepped:Connect(function()
+                if root then root.CanCollide = false end
+            end)
+            noclipBtn.Text = "No Clip : ON"
+            noclipBtn.TextColor3 = Color3.fromRGB(80,255,120)
+        end
+    end)
+
+    -- 🆕 ESP DE JUGADORES
+    local espBtn = createToggle("ESP Jugadores")
+    espBtn.MouseButton1Click:Connect(function()
+        espActivo = not espActivo
+        if espActivo then
+            espBtn.Text = "ESP : ON"
+            espBtn.TextColor3 = Color3.fromRGB(80,255,120)
+            connections.esp = RunService.RenderStepped:Connect(function()
+                for _,p in ipairs(Players:GetPlayers()) do
+                    if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") and p.Character:FindFirstChild("Humanoid") and p.Character.Humanoid.Health > 0 then
+                        local parte = p.Character.HumanoidRootPart
+                        local dist = (root.Position - parte.Position).Magnitude
+                        local vector, visible = Workspace.CurrentCamera:WorldToViewportPoint(parte.Position)
+                        if visible then
+                            if not etiquetasESP[p] then
+                                local gui = Instance.new("BillboardGui")
+                                gui.Name = "ESP_"..p.Name
+                                gui.Adornee = parte
+                                gui.Size = UDim2.new(0, 150, 0, 50)
+                                gui.AlwaysOnTop = true
+                                gui.Parent = screenGui
+                                local txt = Instance.new("TextLabel")
+                                txt.Size = UDim2.new(1,0,1,0)
+                                txt.BackgroundTransparency = 1
+                                txt.TextColor3 = Color3.fromRGB(255,80,80)
+                                txt.TextSize = 14
+                                txt.Font = Enum.Font.GothamBold
+                                txt.Text = ""
+                                txt.Parent = gui
+                                etiquetasESP[p] = txt
+                            end
+                            etiquetasESP[p].Text = string.format("👤 %s\n📏 %.0fm", p.Name, dist)
+                        else
+                            if etiquetasESP[p] then etiquetasESP[p].Parent:Destroy() etiquetasESP[p] = nil end
+                        end
+                    else
+                        if etiquetasESP[p] then etiquetasESP[p].Parent:Destroy() etiquetasESP[p] = nil end
+                    end
+                end
+            end)
+        else
+            espBtn.Text = "ESP : OFF"
+            espBtn.TextColor3 = Color3.fromRGB(255,90,90)
+            if connections.esp then connections.esp:Disconnect() connections.esp = nil end
+            for _,etq in pairs(etiquetasESP) do if etq then etq.Parent:Destroy() end end
+            etiquetasESP = {}
         end
     end)
 
@@ -521,22 +665,19 @@ function crearMenuPrincipal()
     -- Minimizar y Cerrar
     minBtn.MouseButton1Click:Connect(function()
         content.Visible = not content.Visible
-        mainFrame.Size = content.Visible and UDim2.new(0,450,0,680) or UDim2.new(0,450,0,65)
+        mainFrame.Size = content.Visible and UDim2.new(0,450,0,680) or UDim2.new(0,450,0,75)
     end)
 
     closeBtn.MouseButton1Click:Connect(function()
-        for _, conn in pairs(connections) do
-            if conn then conn:Disconnect() end
-        end
+        for _, conn in pairs(connections) do if conn then conn:Disconnect() end end
         Workspace.Gravity = normalGravity
-        if humanoid then
-            humanoid.WalkSpeed = velocidadNormal
-            humanoid.JumpPower = 50
-            humanoid.JumpHeight = 7.2
-        end
+        if humanoid then humanoid.WalkSpeed = velocidadNormal humanoid.JumpPower = 50 humanoid.JumpHeight = 7.2 end
+        for _,etq in pairs(etiquetasESP) do if etq then etq.Parent:Destroy() end end
         screenGui:Destroy()
     end)
 
-    print("✅ EDER2302 PANEL FASE BETA | Echo también por TOCINACIO23021 CARGADO CORRECTAMENTE")
-    print("Usa los valores que quieras en Speed y JumpPower")
+    print("✅ EDER2302 PANEL FASE BETA CARGADO")
 end
+
+
+            
