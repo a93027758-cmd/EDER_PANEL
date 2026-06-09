@@ -1,5 +1,6 @@
 -- // EDER2302 PANEL FASE BETA | Echo también por TOCINACIO23021
--- CORREGIDO PARA DELTA EXECUTOR
+-- ADVERTENCIA: Viola los Términos de Servicio de Roblox. Úsalo bajo tu propia responsabilidad.
+-- CORREGIDO PARA DELTA EXECUTOR + AIMBOT + LISTA DE IGNORADOS
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -304,19 +305,16 @@ Echo también por TOCINACIO23021", jugador, dispositivo, #Players:GetPlayers())
 
     -- ==================== VARIABLES AIMBOT ====================
     local aimbotActivo = false
-    local aimbotTarget = nil
-    local currentAimPos = nil
-    local aimSmoothness = 0.15
-    local fovAngle = 90
-    local aimPart = "Head"
-    local ignoreTeammates = true
-    local ignoreList = {}  -- Lista de ignorados (no se guarda, solo en memoria)
+    local aimbotFOV = 90
+    local aimbotSmooth = 15
+    local aimbotPart = "Head"
+    local aimbotIgnoreTeammates = true
+    local ignoreList = {}
 
     local function updateChar()
         local char = player.Character or player.CharacterAdded:Wait()
         humanoid = char:WaitForChild("Humanoid")
         root = char:WaitForChild("HumanoidRootPart")
-        currentAimPos = root.Position
     end
     updateChar()
     player.CharacterAdded:Connect(updateChar)
@@ -616,124 +614,23 @@ Echo también por TOCINACIO23021", jugador, dispositivo, #Players:GetPlayers())
         end
     end)
 
-    -- ==================== 🎯 AIMBOT COMPLETO ====================
-    local aimbotFrame = Instance.new("Frame")
-    aimbotFrame.Size = UDim2.new(1, 0, 0, 180)
-    aimbotFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
-    aimbotFrame.Parent = content
-    Instance.new("UICorner", aimbotFrame).CornerRadius = UDim.new(0, 10)
-    Instance.new("UIStroke", aimbotFrame).Thickness = 0.8
-    Instance.new("UIStroke", aimbotFrame).Color = Color3.fromRGB(70, 70, 90)
-
-    local aimbotTitle = Instance.new("TextLabel")
-    aimbotTitle.Size = UDim2.new(1, 0, 0, 30)
-    aimbotTitle.Position = UDim2.new(0, 0, 0, 5)
-    aimbotTitle.BackgroundTransparency = 1
-    aimbotTitle.Text = "🎯 AIMBOT CONFIGURACIÓN"
-    aimbotTitle.TextColor3 = Color3.fromRGB(110, 220, 255)
-    aimbotTitle.TextSize = 16
-    aimbotTitle.Font = Enum.Font.GothamBold
-    aimbotTitle.TextWrapped = true
-    aimbotTitle.Parent = aimbotFrame
-
-    -- FOV Input
-    local fovLabel = Instance.new("TextLabel")
-    fovLabel.Size = UDim2.new(0.45, 0, 0, 25)
-    fovLabel.Position = UDim2.new(0.03, 0, 0.2, 0)
-    fovLabel.BackgroundTransparency = 1
-    fovLabel.Text = "FOV:"
-    fovLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    fovLabel.TextSize = 14
-    fovLabel.Font = Enum.Font.GothamSemibold
-    fovLabel.Parent = aimbotFrame
-
-    local fovBox = Instance.new("TextBox")
-    fovBox.Size = UDim2.new(0.45, 0, 0, 25)
-    fovBox.Position = UDim2.new(0.52, 0, 0.2, 0)
-    fovBox.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    fovBox.Text = fovAngle
-    fovBox.TextColor3 = Color3.new(1, 1, 1)
-    fovBox.TextSize = 14
-    fovBox.Font = Enum.Font.GothamSemibold
-    fovBox.Parent = aimbotFrame
-    Instance.new("UICorner", fovBox).CornerRadius = UDim.new(0, 6)
-    Instance.new("UIStroke", fovBox).Thickness = 1
-    Instance.new("UIStroke", fovBox).Color = Color3.fromRGB(90, 180, 255)
-
-    -- Smooth Input
-    local smoothLabel = Instance.new("TextLabel")
-    smoothLabel.Size = UDim2.new(0.45, 0, 0, 25)
-    smoothLabel.Position = UDim2.new(0.03, 0, 0.4, 0)
-    smoothLabel.BackgroundTransparency = 1
-    smoothLabel.Text = "Smooth:"
-    smoothLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    smoothLabel.TextSize = 14
-    smoothLabel.Font = Enum.Font.GothamSemibold
-    smoothLabel.Parent = aimbotFrame
-
-    local smoothBox = Instance.new("TextBox")
-    smoothBox.Size = UDim2.new(0.45, 0, 0, 25)
-    smoothBox.Position = UDim2.new(0.52, 0, 0.4, 0)
-    smoothBox.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    smoothBox.Text = tostring(aimSmoothness * 100)
-    smoothBox.TextColor3 = Color3.new(1, 1, 1)
-    smoothBox.TextSize = 14
-    smoothBox.Font = Enum.Font.GothamSemibold
-    smoothBox.Parent = aimbotFrame
-    Instance.new("UICorner", smoothBox).CornerRadius = UDim.new(0, 6)
-    Instance.new("UIStroke", smoothBox).Thickness = 1
-    Instance.new("UIStroke", smoothBox).Color = Color3.fromRGB(90, 180, 255)
-
-    -- Parte del cuerpo
-    local partLabel = Instance.new("TextLabel")
-    partLabel.Size = UDim2.new(0.45, 0, 0, 25)
-    partLabel.Position = UDim2.new(0.03, 0, 0.6, 0)
-    partLabel.BackgroundTransparency = 1
-    partLabel.Text = "Parte:"
-    partLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-    partLabel.TextSize = 14
-    partLabel.Font = Enum.Font.GothamSemibold
-    partLabel.Parent = aimbotFrame
-
-    local partBox = Instance.new("TextBox")
-    partBox.Size = UDim2.new(0.45, 0, 0, 25)
-    partBox.Position = UDim2.new(0.52, 0, 0.6, 0)
-    partBox.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    partBox.Text = aimPart
-    partBox.TextColor3 = Color3.new(1, 1, 1)
-    partBox.TextSize = 14
-    partBox.Font = Enum.Font.GothamSemibold
-    partBox.PlaceholderText = "Head, Body, Random"
-    partBox.Parent = aimbotFrame
-    Instance.new("UICorner", partBox).CornerRadius = UDim.new(0, 6)
-    Instance.new("UIStroke", partBox).Thickness = 1
-    Instance.new("UIStroke", partBox).Color = Color3.fromRGB(90, 180, 255)
-
-    -- Botón activar aimbot
+    -- ==================== 🎯 AIMBOT ====================
     local aimbotBtn = createToggle("🎯 AIMBOT")
-    aimbotBtn.Size = UDim2.new(1, 0, 0, 35)
-    aimbotBtn.Position = UDim2.new(0.03, 0, 0.85, 0)
-    aimbotBtn.TextColor3 = Color3.new(1, 1, 1)
-
     aimbotBtn.MouseButton1Click:Connect(function()
         aimbotActivo = not aimbotActivo
         if aimbotActivo then
             aimbotBtn.Text = "🎯 AIMBOT : ON"
-            aimbotBtn.TextColor3 = Color3.fromRGB(80, 255, 120)
+            aimbotBtn.TextColor3 = Color3.fromRGB(80,255,120)
             
             connections.aimbot = RunService.RenderStepped:Connect(function()
                 if not humanoid or not root then return end
                 
-                fovAngle = tonumber(fovBox.Text) or 90
-                aimSmoothness = tonumber(smoothBox.Text) or 15
-                aimSmoothness = aimSmoothness / 100
-                aimPart = partBox.Text or "Head"
-                
-                local bestTarget = nil
-                local bestDistance = math.huge
                 local camera = Workspace.CurrentCamera
                 local cameraPos = camera.Position
                 local cameraDir = camera.CFrame.LookVector
+                
+                local bestTarget = nil
+                local bestDistance = math.huge
                 
                 for _, p in ipairs(Players:GetPlayers()) do
                     if p == player then continue end
@@ -742,12 +639,14 @@ Echo también por TOCINACIO23021", jugador, dispositivo, #Players:GetPlayers())
                     if not p.Character:FindFirstChild("Humanoid") then continue end
                     if p.Character.Humanoid.Health <= 0 then continue end
                     
-                    if ignoreTeammates then
+                    -- Ignorar teammates
+                    if aimbotIgnoreTeammates then
                         if p.Team and player.Team and p.Team == player.Team then
                             continue
                         end
                     end
                     
+                    -- Ignorar si está en la lista
                     if ignoreList[p.Name] then
                         continue
                     end
@@ -756,62 +655,46 @@ Echo también por TOCINACIO23021", jugador, dispositivo, #Players:GetPlayers())
                     local targetPos = targetPart.Position
                     local distance = (cameraPos - targetPos).Magnitude
                     
+                    -- Calcular FOV
                     local toTarget = (targetPos - cameraPos).Unit
                     local angle = math.acos(math.min(cameraDir:Dot(toTarget), 1))
                     local angleDegrees = angle * (180 / math.pi)
                     
-                    if angleDegrees <= fovAngle / 2 then
+                    if angleDegrees <= aimbotFOV / 2 then
                         if distance < bestDistance then
                             bestDistance = distance
-                            bestTarget = {
-                                player = p,
-                                part = targetPart,
-                                position = targetPos,
-                                distance = distance
-                            }
+                            bestTarget = {player = p, position = targetPos}
                         end
                     end
                 end
                 
-                aimbotTarget = bestTarget
-                
-                if bestTarget and root then
+                -- Apuntar al objetivo
+                if bestTarget then
                     local targetPos = bestTarget.position
                     
-                    if aimPart == "Head" then
+                    -- Selección de parte
+                    if aimbotPart == "Head" then
                         local head = bestTarget.player.Character:FindFirstChild("Head")
                         if head then targetPos = head.Position end
-                    elseif aimPart == "Body" then
+                    elseif aimbotPart == "Body" then
                         targetPos = bestTarget.player.Character.HumanoidRootPart.Position
-                    elseif aimPart == "Random" then
-                        local parts = {"Head", "HumanoidRootPart", "LeftArm", "RightArm"}
-                        local partName = parts[math.random(1, #parts)]
-                        local part = bestTarget.player.Character:FindFirstChild(partName)
-                        if part then targetPos = part.Position end
                     end
                     
-                    if not currentAimPos then
-                        currentAimPos = root.Position
-                    end
-                    
-                    local delta = targetPos - currentAimPos
-                    currentAimPos = currentAimPos + delta * aimSmoothness
-                    
-                    local screenPos = camera:WorldToScreenPoint(currentAimPos)
+                    -- Suavizado
+                    local screenPos = camera:WorldToScreenPoint(targetPos)
                     local centerX = camera.ViewportSize.X / 2
                     local centerY = camera.ViewportSize.Y / 2
                     
                     local offsetX = screenPos.X - centerX
                     local offsetY = screenPos.Y - centerY
                     
+                    -- Simular click
                     UserInputService.SendMouse2Click(offsetX, offsetY)
                 end
             end)
         else
             aimbotBtn.Text = "🎯 AIMBOT : OFF"
-            aimbotBtn.TextColor3 = Color3.fromRGB(255, 90, 90)
-            aimbotTarget = nil
-            currentAimPos = nil
+            aimbotBtn.TextColor3 = Color3.fromRGB(255,90,90)
             if connections.aimbot then 
                 connections.aimbot:Disconnect() 
                 connections.aimbot = nil 
@@ -819,212 +702,152 @@ Echo también por TOCINACIO23021", jugador, dispositivo, #Players:GetPlayers())
         end
     end)
 
-    -- ==================== 📋 LISTA DE JUGADORES A IGNORAR ====================
-    local ignoreFrame = Instance.new("Frame")
-    ignoreFrame.Size = UDim2.new(1, 0, 0, 140)
-    ignoreFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
-    ignoreFrame.Parent = content
-    Instance.new("UICorner", ignoreFrame).CornerRadius = UDim.new(0, 10)
-    Instance.new("UIStroke", ignoreFrame).Thickness = 0.8
-    Instance.new("UIStroke", ignoreFrame).Color = Color3.fromRGB(70, 70, 90)
+    -- FOV
+    local fovBtn = createToggle("FOV AIMBOT")
+    local fovBox = Instance.new("TextBox")
+    fovBox.Size = UDim2.new(0.45,0,0,35)
+    fovBox.Position = UDim2.new(0.5,0,0,8)
+    fovBox.BackgroundColor3 = Color3.fromRGB(25,25,35)
+    fovBox.Text = aimbotFOV
+    fovBox.TextColor3 = Color3.new(1,1,1)
+    fovBox.TextSize = 16
+    fovBox.Font = Enum.Font.GothamSemibold
+    fovBox.Parent = fovBtn.Parent
+    Instance.new("UICorner", fovBox).CornerRadius = UDim.new(0,8)
+    Instance.new("UIStroke", fovBox).Thickness = 1
+    Instance.new("UIStroke", fovBox).Color = Color3.fromRGB(90, 180, 255)
+    
+    fovBtn.Size = UDim2.new(0.45,0,0,35)
+    fovBtn.Position = UDim2.new(0.03,0,0,8)
+    fovBtn.Text = "FOV: 90"
+    fovBtn.TextColor3 = Color3.new(1,1,1)
 
-    local ignoreTitle = Instance.new("TextLabel")
-    ignoreTitle.Size = UDim2.new(1, 0, 0, 30)
-    ignoreTitle.Position = UDim2.new(0, 0, 0, 5)
-    ignoreTitle.BackgroundTransparency = 1
-    ignoreTitle.Text = "📋 JUGADORES A IGNORAR"
-    ignoreTitle.TextColor3 = Color3.fromRGB(110, 220, 255)
-    ignoreTitle.TextSize = 16
-    ignoreTitle.Font = Enum.Font.GothamBold
-    ignoreTitle.TextWrapped = true
-    ignoreTitle.Parent = ignoreFrame
+    -- Smooth
+    local smoothBtn = createToggle("SMOOTH AIM")
+    local smoothBox = Instance.new("TextBox")
+    smoothBox.Size = UDim2.new(0.45,0,0,35)
+    smoothBox.Position = UDim2.new(0.5,0,0,8)
+    smoothBox.BackgroundColor3 = Color3.fromRGB(25,25,35)
+    smoothBox.Text = aimbotSmooth
+    smoothBox.TextColor3 = Color3.new(1,1,1)
+    smoothBox.TextSize = 16
+    smoothBox.Font = Enum.Font.GothamSemibold
+    smoothBox.Parent = smoothBtn.Parent
+    Instance.new("UICorner", smoothBox).CornerRadius = UDim.new(0,8)
+    Instance.new("UIStroke", smoothBox).Thickness = 1
+    Instance.new("UIStroke", smoothBox).Color = Color3.fromRGB(90, 180, 255)
+    
+    smoothBtn.Size = UDim2.new(0.45,0,0,35)
+    smoothBtn.Position = UDim2.new(0.03,0,0,8)
+    smoothBtn.Text = "SMOOTH: 15"
+    smoothBtn.TextColor3 = Color3.new(1,1,1)
 
+    -- Parte del cuerpo
+    local partBtn = createToggle("PARTE AIMBOT")
+    local partBox = Instance.new("TextBox")
+    partBox.Size = UDim2.new(0.45,0,0,35)
+    partBox.Position = UDim2.new(0.5,0,0,8)
+    partBox.BackgroundColor3 = Color3.fromRGB(25,25,35)
+    partBox.Text = aimbotPart
+    partBox.TextColor3 = Color3.new(1,1,1)
+    partBox.TextSize = 16
+    partBox.Font = Enum.Font.GothamSemibold
+    partBox.PlaceholderText = "Head, Body"
+    partBox.Parent = partBtn.Parent
+    Instance.new("UICorner", partBox).CornerRadius = UDim.new(0,8)
+    Instance.new("UIStroke", partBox).Thickness = 1
+    Instance.new("UIStroke", partBox).Color = Color3.fromRGB(90, 180, 255)
+    
+    partBtn.Size = UDim2.new(0.45,0,0,35)
+    partBtn.Position = UDim2.new(0.03,0,0,8)
+    partBtn.Text = "PARTE: Head"
+    partBtn.TextColor3 = Color3.new(1,1,1)
+
+    -- Ignorar teammates
+    local teamBtn = createToggle("IGNORAR TEAMMATES")
+    teamBtn.Text = aimbotIgnoreTeammates and "IGNORAR TEAMMATES : ON" or "IGNORAR TEAMMATES : OFF"
+    teamBtn.TextColor3 = aimbotIgnoreTeammates and Color3.fromRGB(80,255,120) or Color3.fromRGB(255,90,90)
+    
+    teamBtn.MouseButton1Click:Connect(function()
+        aimbotIgnoreTeammates = not aimbotIgnoreTeammates
+        teamBtn.Text = aimbotIgnoreTeammates and "IGNORAR TEAMMATES : ON" or "IGNORAR TEAMMATES : OFF"
+        teamBtn.TextColor3 = aimbotIgnoreTeammates and Color3.fromRGB(80,255,120) or Color3.fromRGB(255,90,90)
+    end)
+
+    -- ==================== 📋 LISTA DE IGNORADOS ====================
+    local ignoreBtn = createToggle("📋 AÑADIR A IGNORADOS")
     local ignoreInput = Instance.new("TextBox")
-    ignoreInput.Size = UDim2.new(0.6, 0, 0, 30)
-    ignoreInput.Position = UDim2.new(0.03, 0, 0.25, 0)
-    ignoreInput.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+    ignoreInput.Size = UDim2.new(0.6,0,0,35)
+    ignoreInput.Position = UDim2.new(0.03,0,0,8)
+    ignoreInput.BackgroundColor3 = Color3.fromRGB(25,25,35)
     ignoreInput.PlaceholderText = "Nombre del jugador..."
     ignoreInput.Text = ""
-    ignoreInput.TextColor3 = Color3.new(1, 1, 1)
+    ignoreInput.TextColor3 = Color3.new(1,1,1)
     ignoreInput.TextSize = 14
     ignoreInput.Font = Enum.Font.GothamSemibold
-    ignoreInput.Parent = ignoreFrame
-    Instance.new("UICorner", ignoreInput).CornerRadius = UDim.new(0, 6)
+    ignoreInput.Parent = ignoreBtn.Parent
+    Instance.new("UICorner", ignoreInput).CornerRadius = UDim.new(0,8)
     Instance.new("UIStroke", ignoreInput).Thickness = 1
-    ignoreInput.UIStroke = Instance.new("UIStroke", ignoreInput)
-    ignoreInput.UIStroke.Thickness = 1
-    ignoreInput.UIStroke.Color = Color3.fromRGB(90, 180, 255)
+    Instance.new("UIStroke", ignoreInput).Color = Color3.fromRGB(90, 180, 255)
+    
+    local ignoreAddBtn = Instance.new("TextButton")
+    ignoreAddBtn.Size = UDim2.new(0.3,0,0,35)
+    ignoreAddBtn.Position = UDim2.new(0.63,0,0,8)
+    ignoreAddBtn.BackgroundColor3 = Color3.fromRGB(30,180,80)
+    ignoreAddBtn.Text = "➕"
+    ignoreAddBtn.TextColor3 = Color3.new(1,1,1)
+    ignoreAddBtn.TextSize = 18
+    ignoreAddBtn.Font = Enum.Font.GothamBold
+    ignoreAddBtn.Parent = ignoreBtn.Parent
+    Instance.new("UICorner", ignoreAddBtn).CornerRadius = UDim.new(0,8)
+    Instance.new("UIStroke", ignoreAddBtn).Thickness = 1
+    Instance.new("UIStroke", ignoreAddBtn).Color = Color3.fromRGB(120, 255, 180)
+    
+    ignoreBtn.Size = UDim2.new(1,0,0,58)
+    ignoreBtn.Position = UDim2.new(0,0,0,0)
+    ignoreBtn.Text = "📋 LISTA: " .. #ignoreList .. " jugadores"
+    ignoreBtn.TextColor3 = Color3.new(1,1,1)
 
-    local addIgnoreBtn = Instance.new("TextButton")
-    addIgnoreBtn.Size = UDim2.new(0.3, 0, 0, 30)
-    addIgnoreBtn.Position = UDim2.new(0.63, 0, 0.25, 0)
-    addIgnoreBtn.BackgroundColor3 = Color3.fromRGB(30, 180, 80)
-    addIgnoreBtn.Text = "➕"
-    addIgnoreBtn.TextColor3 = Color3.new(1, 1, 1)
-    addIgnoreBtn.TextSize = 18
-    addIgnoreBtn.Font = Enum.Font.GothamBold
-    addIgnoreBtn.Parent = ignoreFrame
-    Instance.new("UICorner", addIgnoreBtn).CornerRadius = UDim.new(0, 6)
-    Instance.new("UIStroke", addIgnoreBtn).Thickness = 1
-    Instance.new("UIStroke", addIgnoreBtn).Color = Color3.fromRGB(120, 255, 180)
-
-    addIgnoreBtn.MouseButton1Click:Connect(function()
+    ignoreAddBtn.MouseButton1Click:Connect(function()
         local nombre = ignoreInput.Text:gsub("^\\s+", ""):gsub("\\s+$", "")
         if nombre and #nombre > 0 then
             if not ignoreList[nombre] then
                 ignoreList[nombre] = true
                 ignoreInput.Text = ""
-                ignoreStatus.TextColor3 = Color3.fromRGB(100, 255, 150)
-                ignoreStatus.Text = "✅ " .. nombre .. " agregado"
+                ignoreBtn.Text = "📋 LISTA: " .. #ignoreList .. " jugadores"
+                ignoreBtn.TextColor3 = Color3.fromRGB(80,255,120)
+                print("✅ " .. nombre .. " agregado a ignorados")
             else
-                ignoreStatus.TextColor3 = Color3.fromRGB(255, 200, 100)
-                ignoreStatus.Text = "⚠️ " .. nombre .. " ya está en la lista"
-            end
-            task.wait(2)
-            ignoreStatus.Text = ""
-        end
-    end)
-
-    local removeIgnoreBtn = Instance.new("TextButton")
-    removeIgnoreBtn.Size = UDim2.new(0.3, 0, 0, 30)
-    removeIgnoreBtn.Position = UDim2.new(0.31, 0, 0.25, 0)
-    removeIgnoreBtn.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-    removeIgnoreBtn.Text = "➖"
-    removeIgnoreBtn.TextColor3 = Color3.new(1, 1, 1)
-    removeIgnoreBtn.TextSize = 18
-    removeIgnoreBtn.Font = Enum.Font.GothamBold
-    removeIgnoreBtn.Parent = ignoreFrame
-    Instance.new("UICorner", removeIgnoreBtn).CornerRadius = UDim.new(0, 6)
-    Instance.new("UIStroke", removeIgnoreBtn).Thickness = 1
-    Instance.new("UIStroke", removeIgnoreBtn).Color = Color3.fromRGB(255, 120, 120)
-
-    removeIgnoreBtn.MouseButton1Click:Connect(function()
-        local nombre = ignoreInput.Text:gsub("^\\s+", ""):gsub("\\s+$", "")
-        if nombre and #nombre > 0 then
-            if ignoreList[nombre] then
-                ignoreList[nombre] = nil
-                ignoreInput.Text = ""
-                ignoreStatus.TextColor3 = Color3.fromRGB(100, 255, 150)
-                ignoreStatus.Text = "✅ " .. nombre .. " eliminado"
-            else
-                ignoreStatus.TextColor3 = Color3.fromRGB(255, 200, 100)
-                ignoreStatus.Text = "⚠️ " .. nombre .. " no está en la lista"
-            end
-            task.wait(2)
-            ignoreStatus.Text = ""
-        end
-    end)
-
-    local ignoreStatus = Instance.new("TextLabel")
-    ignoreStatus.Size = UDim2.new(0.9, 0, 0, 25)
-    ignoreStatus.Position = UDim2.new(0.05, 0, 0.55, 0)
-    ignoreStatus.BackgroundTransparency = 1
-    ignoreStatus.Text = ""
-    ignoreStatus.TextColor3 = Color3.fromRGB(100, 255, 150)
-    ignoreStatus.TextSize = 13
-    ignoreStatus.Font = Enum.Font.Gotham
-    ignoreStatus.Parent = ignoreFrame
-
-    local teamCheckbox = Instance.new("TextButton")
-    teamCheckbox.Size = UDim2.new(0.9, 0, 0, 28)
-    teamCheckbox.Position = UDim2.new(0.05, 0, 0.75, 0)
-    teamCheckbox.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-    teamCheckbox.Text = ignoreTeammates and "✓ Ignorar compañeros de equipo" or "✗ Ignorar compañeros de equipo"
-    teamCheckbox.TextColor3 = Color3.fromRGB(120, 255, 180)
-    teamCheckbox.TextSize = 13
-    teamCheckbox.Font = Enum.Font.GothamSemibold
-    teamCheckbox.AutoButtonColor = false
-    teamCheckbox.Parent = ignoreFrame
-    Instance.new("UICorner", teamCheckbox).CornerRadius = UDim.new(0, 6)
-    Instance.new("UIStroke", teamCheckbox).Thickness = 1
-    Instance.new("UIStroke", teamCheckbox).Color = Color3.fromRGB(90, 180, 255)
-
-    teamCheckbox.MouseButton1Click:Connect(function()
-        ignoreTeammates = not ignoreTeammates
-        teamCheckbox.Text = ignoreTeammates and "✓ Ignorar compañeros de equipo" or "✗ Ignorar compañeros de equipo"
-        teamCheckbox.TextColor3 = ignoreTeammates and Color3.fromRGB(120, 255, 180) or Color3.fromRGB(255, 200, 100)
-    end)
-
-    local ignoreListScroll = Instance.new("ScrollingFrame")
-    ignoreListScroll.Size = UDim2.new(0.9, 0, 0, 35)
-    ignoreListScroll.Position = UDim2.new(0.05, 0, 0.88, 0)
-    ignoreListScroll.BackgroundTransparency = 1
-    ignoreListScroll.ScrollBarThickness = 4
-    ignoreListScroll.ScrollBarImageColor3 = Color3.fromRGB(90, 180, 255)
-    ignoreListScroll.Parent = ignoreFrame
-
-    local ignoreListLayout = Instance.new("UIListLayout")
-    ignoreListLayout.Padding = UDim.new(0, 3)
-    ignoreListLayout.SortOrder = Enum.SortOrder.Name
-    ignoreListLayout.Parent = ignoreListScroll
-
-    local ignoreListFill = Instance.new("UIPadding")
-    ignoreListFill.PaddingTop = UDim.new(0, 3)
-    ignoreListFill.Parent = ignoreListScroll
-
-    local function actualizarListaIgnorados()
-        for _, child in ipairs(ignoreListScroll:GetChildren()) do
-            if child:IsA("TextButton") then
-                child:Destroy()
-            end
-        end
-        
-        for nombre, _ in pairs(ignoreList) do
-            local btn = Instance.new("TextButton")
-            btn.Size = UDim2.new(1, 0, 0, 25)
-            btn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-            btn.Text = "🗑️ " .. nombre
-            btn.TextColor3 = Color3.fromRGB(255, 150, 150)
-            btn.TextSize = 13
-            btn.Font = Enum.Font.GothamSemibold
-            btn.AutoButtonColor = false
-            btn.Parent = ignoreListScroll
-            Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 5)
-            
-            btn.MouseButton1Click:Connect(function()
-                ignoreList[nombre] = nil
-                actualizarListaIgnorados()
-                ignoreStatus.TextColor3 = Color3.fromRGB(100, 255, 150)
-                ignoreStatus.Text = "✅ " .. nombre .. " eliminado"
+                ignoreBtn.TextColor3 = Color3.fromRGB(255,200,100)
+                ignoreBtn.Text = "⚠️ " .. nombre .. " ya está en la lista"
                 task.wait(2)
-                ignoreStatus.Text = ""
-            end)
+                ignoreBtn.Text = "📋 LISTA: " .. #ignoreList .. " jugadores"
+                ignoreBtn.TextColor3 = Color3.new(1,1,1)
+            end
         end
-        
-        if #ignoreList == 0 then
-            local emptyLabel = Instance.new("TextLabel")
-            emptyLabel.Size = UDim2.new(1, 0, 0, 25)
-            emptyLabel.BackgroundTransparency = 1
-            emptyLabel.Text = "No hay jugadores ignorados"
-            emptyLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
-            emptyLabel.TextSize = 13
-            emptyLabel.Font = Enum.Font.Gotham
-            emptyLabel.Parent = ignoreListScroll
-        end
-    end
-
-    actualizarListaIgnorados()
+    end)
 
     -- Teleport
     local saveBtn = createToggle("Guardar Posición")
     local instantBtn = createToggle("Teleport Instantáneo")
-    local smoothBtn = createToggle("Teleport Suave")
+    local smoothBtn2 = createToggle("Teleport Suave")
 
     saveBtn.TextColor3 = Color3.new(1,1,1)
     instantBtn.TextColor3 = Color3.new(1,1,1)
-    smoothBtn.TextColor3 = Color3.new(1,1,1)
+    smoothBtn2.TextColor3 = Color3.new(1,1,1)
 
     saveBtn.MouseButton1Click:Connect(function()
         if root then savedCFrame = root.CFrame saveBtn.Text = "✅ Guardado" task.delay(1.2, function() saveBtn.Text = "Guardar Posición" end) end
     end)
     instantBtn.MouseButton1Click:Connect(function() if savedCFrame and root then root.CFrame = savedCFrame end end)
-    smoothBtn.MouseButton1Click:Connect(function() if savedCFrame and root then TweenService:Create(root, TweenInfo.new(1.6, Enum.EasingStyle.Quint), {CFrame = savedCFrame}):Play() end end)
+    smoothBtn2.MouseButton1Click:Connect(function() if savedCFrame and root then TweenService:Create(root, TweenInfo.new(1.6, Enum.EasingStyle.Quint), {CFrame = savedCFrame}):Play() end end)
 
     minBtn.MouseButton1Click:Connect(function()
         content.Visible = not content.Visible
         mainFrame.Size = content.Visible and UDim2.new(0,450,0,680) or UDim2.new(0,450,0,75)
     end)
 
+    -- ✅ BOTÓN CERRAR GUI ARREGLADO
     closeBtn.MouseButton1Click:Connect(function()
         for _, conn in pairs(connections) do
             if typeof(conn) == "RBXScriptConnection" then
